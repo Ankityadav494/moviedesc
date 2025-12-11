@@ -8,6 +8,9 @@ const SEARCH_API = `https://api.themoviedb.org/3/search/movie?api_key=${KEY}&que
 const main = document.getElementById("main");
 const form = document.getElementById("form");
 const search = document.getElementById("search");
+const statusEl = document.getElementById("status");
+const PLACEHOLDER =
+  "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=60";
 
 const getClassByRate = (vote) => {
   if (vote >= 7.5) return "green";
@@ -17,32 +20,46 @@ const getClassByRate = (vote) => {
 
 const showMovies = (movies) => {
   main.innerHTML = "";
+
+  if (!movies || movies.length === 0) {
+    statusEl.textContent = "No movies found. Try another title.";
+    return;
+  }
+
+  statusEl.textContent = `Showing ${movies.length} result${movies.length > 1 ? "s" : ""}`;
+
   movies.forEach((movie) => {
     const { title, poster_path, vote_average, overview } = movie;
     const movieElement = document.createElement("div");
     movieElement.classList.add("movie");
     movieElement.innerHTML = `
-    <img
-      src="${IMG_PATH + poster_path}"
-      alt="${title}"
-    />
-    <div class="movie-info">
-      <h3>${title}</h3>
-      <span class="${getClassByRate(vote_average)}">${vote_average}</span>
-    </div>
-    <div class="overview">
-      <h3>Overview</h3>
-      ${overview}
-    </div>
-  `;
+      <img
+        src="${poster_path ? IMG_PATH + poster_path : PLACEHOLDER}"
+        alt="${title}"
+      />
+      <div class="movie-info">
+        <h3>${title}</h3>
+        <span class="badge ${getClassByRate(vote_average)}">${(vote_average ?? 0).toFixed(1)}</span>
+      </div>
+      <div class="overview">
+        <h3>Overview</h3>
+        ${overview || "No description available."}
+      </div>
+    `;
     main.appendChild(movieElement);
   });
 };
 
 const getMovies = async (url) => {
-  const res = await fetch(url);
-  const data = await res.json();
-  showMovies(data.results);
+  statusEl.textContent = "Loading movies…";
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    showMovies(data.results);
+  } catch (err) {
+    statusEl.textContent = "Unable to fetch movies right now. Please retry.";
+    main.innerHTML = "";
+  }
 };
 
 getMovies(API_URL);

@@ -7,18 +7,27 @@
     <title>Movie App</title>
   </head>
   <body>
-    <header>
-      <h1>Should I watch it?</h1>
-      <form id="form">
-        <input type="text" placeholder="Search" id="search" class="search" />
+    <header class="hero">
+      <div class="hero__text">
+        <p class="eyebrow">Movie Explorer</p>
+        <h1>Find something great to watch tonight</h1>
+        <p class="sub">Search by title or browse what people love right now.</p>
+      </div>
+      <form id="form" class="search-bar">
+        <input type="text" placeholder="Search for a movie..." id="search" class="search" />
+        <button type="submit" class="search-btn">Search</button>
       </form>
     </header>
-    <main id="main"></main>
+
+    <section class="content">
+      <div id="status" class="status"></div>
+      <main id="main" class="grid"></main>
+    </section>
+
     <footer class="footer">
-      <p>
-        This project uses the TMDb API but is not endorsed or certified by TMDb.
-      </p>
+      <p>Powered by TMDB · Demo app for learning purposes</p>
     </footer>
+
     <script src="script.js"></script>
   </body>
 </html>
